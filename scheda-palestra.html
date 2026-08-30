@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scheda Palestra</title>
+<style>
+  :root{
+    --bg:#121212;
+    --bg-card:#1c1c1c;
+    --bg-card-hover:#232323;
+    --accent:#ff5a1f;
+    --accent-dim:#3a2015;
+    --text:#f2f0ec;
+    --text-dim:#a8a49c;
+    --border:#2c2c2a;
+    --green:#7ec488;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    padding-bottom:60px;
+  }
+  header{
+    padding:36px 20px 24px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+  }
+  header .eyebrow{
+    letter-spacing:3px;
+    font-size:12px;
+    color:var(--accent);
+    font-weight:700;
+    text-transform:uppercase;
+  }
+  header h1{
+    font-size:28px;
+    margin:8px 0 4px;
+    font-weight:800;
+    letter-spacing:-0.5px;
+  }
+  header p{
+    color:var(--text-dim);
+    font-size:14px;
+    margin:0;
+  }
+  .tabs{
+    display:flex;
+    max-width:720px;
+    margin:24px auto 0;
+    padding:0 16px;
+    gap:8px;
+  }
+  .tab{
+    flex:1;
+    text-align:center;
+    padding:14px 8px;
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .tab .day{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--text-dim);
+    display:block;
+  }
+  .tab .muscles{
+    font-size:14px;
+    font-weight:700;
+    margin-top:4px;
+    display:block;
+  }
+  .tab.active{
+    background:var(--accent-dim);
+    border-color:var(--accent);
+  }
+  .tab.active .day{color:var(--accent);}
+  main{
+    max-width:720px;
+    margin:28px auto;
+    padding:0 16px;
+  }
+  .day-panel{display:none;}
+  .day-panel.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+  .group-title{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin:28px 0 12px;
+  }
+  .group-title:first-child{margin-top:0;}
+  .group-title h2{
+    font-size:18px;
+    margin:0;
+    font-weight:800;
+  }
+  .group-title span{
+    font-size:12px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+  .exercise{
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    margin-bottom:10px;
+    overflow:hidden;
+  }
+  .exercise-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 16px;
+    cursor:pointer;
+  }
+  .exercise-head:hover{background:var(--bg-card-hover);}
+  .exercise-name{
+    font-size:15px;
+    font-weight:600;
+  }
+  .exercise-meta{
+    font-size:12px;
+    color:var(--text-dim);
+    margin-top:3px;
+  }
+  .chevron{
+    color:var(--accent);
+    font-size:18px;
+    transition:transform .2s ease;
+    flex-shrink:0;
+    margin-left:12px;
+  }
+  .exercise.open .chevron{transform:rotate(180deg);}
+  .exercise-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .25s ease;
+    border-top:0px solid var(--border);
+  }
+  .exercise.open .exercise-body{
+    max-height:200px;
+    border-top:1px solid var(--border);
+  }
+  .exercise-body-inner{
+    padding:14px 16px 16px;
+  }
+  .exercise-body-inner p{
+    font-size:13px;
+    color:var(--text-dim);
+    margin:0 0 12px;
+    line-height:1.5;
+  }
+  .links{
+    display:flex;
+    gap:10px;
+  }
+  .links a{
+    flex:1;
+    text-align:center;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:600;
+    padding:10px 8px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    color:var(--text);
+    background:#161616;
+    transition:all .15s ease;
+  }
+  .links a:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+  .finisher{
+    margin-top:26px;
+    background:linear-gradient(135deg,#2a1408,#1c1c1c);
+    border:1px solid var(--accent);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .finisher-text .label{
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:700;
+  }
+  .finisher-text .name{
+    font-size:16px;
+    font-weight:800;
+    margin-top:3px;
+  }
+  .finisher-scheme{
+    font-size:20px;
+    font-weight:800;
+    color:var(--accent);
+    white-space:nowrap;
+  }
+  footer{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:12px;
+    margin-top:36px;
+    padding:0 20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Sala pesi &middot; 3 giorni</div>
+  <h1>La tua scheda</h1>
+  <p>90 minuti a sessione &middot; tocca un esercizio per foto e video</p>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-day="lun" onclick="showDay('lun')">
+    <span class="day">Lunedì</span>
+    <span class="muscles">Petto&nbsp;/&nbsp;Bicipiti</span>
+  </div>
+  <div class="tab" data-day="mer" onclick="showDay('mer')">
+    <span class="day">Mercoledì</span>
+    <span class="muscles">Dorso&nbsp;/&nbsp;Tricipiti</span>
+  </div>
+  <div class="tab" data-day="ven" onclick="showDay('ven')">
+    <span class="day">Venerdì</span>
+    <span class="muscles">Gambe&nbsp;/&nbsp;Spalle</span>
+  </div>
+</div>
+
+<main>
+
+  <!-- LUNEDI -->
+  <section class="day-panel active" id="panel-lun">
+    <div class="group-title"><h2>Petto</h2><span>4 esercizi</span></div>
+
+    <div class="exercise" data-q="panca piana con bilanciere">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">1. Panca piana con bilanciere</div>
+          <div class="exercise-meta">4 x 8-10 &middot; recupero 90"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Esercizio base per la massa del petto. Scapole retratte, bilanciere scende all'altezza del capezzolo.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="panca inclinata con manubri">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">2. Panca inclinata con manubri</div>
+          <div class="exercise-meta">4 x 10-12 &middot; recupero 75"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Panca a 30-45°, lavora la parte alta del pettorale. Controlla la fase negativa.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="croci ai cavi petto">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">3. Croci ai cavi</div>
+          <div class="exercise-meta">4 x 10-12 &middot; recupero 75"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Movimento di isolamento, gomiti leggermente flessi, senti lo stretch a braccia aperte.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="chest press machine">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">4. Chest press (macchina)</div>
+          <div class="exercise-meta">4 x 10-12 &middot; recupero 75"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Chiude l'allenamento del petto in sicurezza, utile per arrivare a cedimento controllato.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="group-title"><h2>Bicipiti</h2><span>3 esercizi</span></div>
+
+    <div class="exercise" data-q="curl bilanciere bicipiti">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">1. Curl con bilanciere</div>
+          <div class="exercise-meta">3 x 10-12 &middot; recupero 60"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Gomiti fermi lungo il fianco, evita di dondolare il busto.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="curl a martello manubri">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">2. Curl a martello con manubri</div>
+          <div class="exercise-meta">3 x 12-15 &middot; recupero 60"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Presa neutra, coinvolge anche il brachiale e l'avambraccio.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="curl panca scott">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">3. Curl su panca Scott</div>
+          <div class="exercise-meta">3 x 12-15 &middot; recupero 60"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Isola completamente il bicipite, evita di staccare il braccio dal cuscinetto.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="finisher">
+      <div class="finisher-text">
+        <div class="label">Finisher</div>
+        <div class="name">Piegamenti</div>
+      </div>
+      <div class="finisher-scheme">3 x max</div>
+    </div>
+  </section>
+
+  <!-- MERCOLEDI -->
+  <section class="day-panel" id="panel-mer">
+    <div class="group-title"><h2>Dorso</h2><span>4 esercizi</span></div>
+
+    <div class="exercise" data-q="trazioni alla sbarra">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">1. Trazioni alla sbarra</div>
+          <div class="exercise-meta">4 x 6-10 &middot; recupero 90"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Se non riesci a fare ripetizioni pulite, usa la lat machine con presa larga.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="rematore con bilanciere">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">2. Rematore con bilanciere</div>
+          <div class="exercise-meta">4 x 8-10 &middot; recupero 90"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Busto inclinato a 45°, tira il bilanciere verso l'ombelico, schiena sempre dritta.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="pulley basso rematore ai cavi">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">3. Pulley basso</div>
+          <div class="exercise-meta">4 x 10-12 &middot; recupero 75"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Petto in fuori, tira con i gomiti vicino al busto, non usare lo slancio della schiena.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="lat machine presa inversa">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">4. Lat machine presa inversa</div>
+          <div class="exercise-meta">4 x 10-12 &middot; recupero 75"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Presa supina, coinvolge maggiormente la parte bassa del dorso e il bicipite.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="group-title"><h2>Tricipiti</h2><span>3 esercizi</span></div>
+
+    <div class="exercise" data-q="french press tricipiti">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">1. French press</div>
+          <div class="exercise-meta">3 x 10-12 &middot; recupero 60"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Gomiti fermi e stretti, il movimento avviene solo sull'avambraccio.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="pushdown ai cavi tricipiti">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">2. Pushdown ai cavi</div>
+          <div class="exercise-meta">3 x 12-15 &middot; recupero 60"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Gomiti bloccati lungo i fianchi, spingi la barra o la corda fino a estensione completa.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="dip su panca tricipiti">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">3. Dip su panca</div>
+          <div class="exercise-meta">3 x 12-15 &middot; recupero 60"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Mani sul bordo della panca, scendi finché le braccia formano circa 90°.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="finisher">
+      <div class="finisher-text">
+        <div class="label">Finisher</div>
+        <div class="name">Piegamenti</div>
+      </div>
+      <div class="finisher-scheme">3 x max</div>
+    </div>
+  </section>
+
+  <!-- VENERDI -->
+  <section class="day-panel" id="panel-ven">
+    <div class="group-title"><h2>Gambe</h2><span>4 esercizi</span></div>
+
+    <div class="exercise" data-q="squat con bilanciere">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">1. Squat con bilanciere</div>
+          <div class="exercise-meta">4 x 8-10 &middot; recupero 120"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Esercizio principale della giornata. Schiena dritta, scendi fino a coscia parallela al pavimento.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="leg press">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">2. Leg press</div>
+          <div class="exercise-meta">4 x 10-12 &middot; recupero 90"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Piedi larghezza spalle sulla pedana, non bloccare mai le ginocchia in estensione.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="affondi con manubri">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">3. Affondi con manubri</div>
+          <div class="exercise-meta">4 x 10-12 per gamba &middot; recupero 75"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Passo lungo, ginocchio posteriore quasi a sfiorare terra, busto eretto.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="leg extension">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">4. Leg extension</div>
+          <div class="exercise-meta">4 x 12-15 &middot; recupero 60"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Isolamento del quadricipite, ferma un istante il movimento in massima estensione.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="group-title"><h2>Spalle</h2><span>3 esercizi</span></div>
+
+    <div class="exercise" data-q="military press bilanciere spalle">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">1. Military press</div>
+          <div class="exercise-meta">3 x 8-10 &middot; recupero 90"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>In piedi o seduto, spinta sopra la testa senza inarcare troppo la schiena.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="alzate laterali manubri">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">2. Alzate laterali</div>
+          <div class="exercise-meta">3 x 12-15 &middot; recupero 60"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Gomiti leggermente flessi, solleva fino all'altezza delle spalle, senza slanciare.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="exercise" data-q="alzate posteriori spalle">
+      <div class="exercise-head" onclick="toggle(this)">
+        <div>
+          <div class="exercise-name">3. Alzate posteriori</div>
+          <div class="exercise-meta">3 x 12-15 &middot; recupero 60"</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="exercise-body"><div class="exercise-body-inner">
+        <p>Busto inclinato in avanti, lavora il deltoide posteriore aprendo le braccia lateralmente.</p>
+        <div class="links"></div>
+      </div></div>
+    </div>
+
+    <div class="finisher">
+      <div class="finisher-text">
+        <div class="label">Finisher</div>
+        <div class="name">Piegamenti</div>
+      </div>
+      <div class="finisher-scheme">3 x max</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Scheda personale &middot; aggiorna liberamente serie, ripetizioni e recuperi in base alla tua progressione.</footer>
+
+<script>
+function showDay(day){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.day===day));
+  document.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+day).classList.add('active');
+}
+function toggle(headEl){
+  const card = headEl.parentElement;
+  card.classList.toggle('open');
+}
+document.querySelectorAll('.exercise').forEach(ex=>{
+  const q = encodeURIComponent(ex.dataset.q);
+  const links = ex.querySelector('.links');
+  links.innerHTML =
+    '<a href="https://www.google.com/search?q='+q+'&tbm=isch" target="_blank" rel="noopener">Guarda foto</a>' +
+    '<a href="https://www.youtube.com/results?search_query='+q+'" target="_blank" rel="noopener">Guarda video</a>';
+});
+</script>
+
+</body>
+</html>
